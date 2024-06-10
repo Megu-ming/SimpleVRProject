@@ -10,7 +10,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Components/HandGraph.h"
+#include "Components/GrabComponent.h"
 
 // Sets default values
 AVRCharacter::AVRCharacter()
@@ -73,8 +75,8 @@ void AVRCharacter::BeginPlay()
 		const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
 		Subsystem->AddMappingContext(BasicInputDataConfig->InputMappingContext, 0);
 
-		/*const UHandInputDataConfig* VRInputDataConfig = GetDefault<UHandInputDataConfig>();
-		Subsystem->AddMappingContext(VRInputDataConfig->InputMappingContext, 0);*/
+		const UVRHandsInputDataConfig* VRInputDataConfig = GetDefault<UVRHandsInputDataConfig>();
+		Subsystem->AddMappingContext(VRInputDataConfig->InputMappingContext, 0);
 
 		const UVRHandsAnimationInputDataConfig* VRHandsAnimationInputDataConfig = GetDefault<UVRHandsAnimationInputDataConfig>();
 		Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
@@ -102,6 +104,14 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnMove);
 	}
 	{
+		const UVRHandsInputDataConfig* VRHandsInputDataConfig = GetDefault<UVRHandsInputDataConfig>();
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Left, ETriggerEvent::Started, this, &ThisClass::OnGrabLeftStarted);
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Left, ETriggerEvent::Completed, this, &ThisClass::OnGrabLeftCompleted);
+
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Right, ETriggerEvent::Started, this, &ThisClass::OnGrabRightStarted);
+		EnhancedInputComponent->BindAction(VRHandsInputDataConfig->IA_Grab_Right, ETriggerEvent::Completed, this, &ThisClass::OnGrabRightCompleted);
+	}
+	{
 		HandGraphLeft->SetupPlayerInputComponent(MotionControllerLeft, EnhancedInputComponent);
 		HandGraphRight->SetupPlayerInputComponent(MotionControllerRight, EnhancedInputComponent);
 	}
@@ -124,5 +134,36 @@ void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)
 		const FVector RightVector = UKismetMathLibrary::GetRightVector(CameraYaw);
 		AddMovementInput(RightVector, ActionValue.X);
 	}
+}
+
+void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
+{
+	const FVector WorldLocation = MotionControllerComponent->GetComponentLocation();
+	const float Radius = 60.f;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody) };
+	TArray<AActor*> ActorsToIgnore;
+	TArray<FHitResult> HitResults;
+	UKismetSystemLibrary::SphereTraceMultiForObjects(this, WorldLocation, WorldLocation,
+		Radius, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResults, true);
+
+	for (FHitResult& It : HitResults)
+	{
+		AActor* HitActor = It.HitObjectHandle.GetManagingActor();
+		if (!HitActor) { continue; }
+
+		UGrabComponent* GrabComponent = HitActor->GetComponentByClass<UGrabComponent>();
+		if (!GrabComponent) { continue; }
+
+		GrabComponent->Grab(MotionControllerComponent);
+
+		bLeft ? LeftHandAttachedGrabComponent = GrabComponent : RightHandAttachedGrabComponent = GrabComponent;
+
+		// HitActor->Destroy();
+		return;
+	}
+}
+
+void AVRCharacter::OnGrabCompleted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
+{
 }
 

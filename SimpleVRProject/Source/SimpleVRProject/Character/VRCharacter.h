@@ -11,6 +11,7 @@ struct FInputActionValue;
 class UMotionControllerComponent;
 class UVRHandSkeletalMeshComponent;
 class UHandGraph;
+class UGrabComponent;
 
 static inline const FName LeftGrip = TEXT("LeftGrip");
 static inline const FName LeftAim = TEXT("LeftAim");
@@ -41,6 +42,14 @@ public:
 protected:
 	void OnMove(const FInputActionValue& InputActionValue);
 
+	void OnGrabLeftStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerLeft, true, InputActionValue); }
+	void OnGrabRightStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerRight, false, InputActionValue); }
+	void OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue);
+
+	void OnGrabLeftCompleted(const FInputActionValue& InputActionValue) { OnGrabCompleted(MotionControllerLeft, true, InputActionValue); }
+	void OnGrabRightCompleted(const FInputActionValue& InputActionValue) { OnGrabCompleted(MotionControllerRight, false, InputActionValue); }
+	void OnGrabCompleted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue);
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UCameraComponent* VRCamera;
@@ -59,4 +68,10 @@ protected:
 	UHandGraph* HandGraphLeft;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHandGraph* HandGraphRight;
+
+protected:
+	UPROPERTY(Transient)
+	UGrabComponent* LeftHandAttachedGrabComponent = nullptr;
+	UPROPERTY(Transient)
+	UGrabComponent* RightHandAttachedGrabComponent = nullptr;
 };

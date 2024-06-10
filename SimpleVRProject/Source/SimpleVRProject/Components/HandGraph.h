@@ -36,32 +36,32 @@ public:
 	UInputAction* IA_Thumb_Right = nullptr;
 };
 
-//UCLASS()
-//class SIMPLEVRPROJECT_API UVRHandsInputDataConfig : public UObject
-//{
-//	GENERATED_BODY()
-//
-//public:
-//	UVRHandsInputDataConfig();
-//
-//	UInputMappingContext* InputMappingContext = nullptr;
-//
-//public:
-//	UInputAction* IA_Grab_Left = nullptr;
-//	UInputAction* IA_Grab_Right = nullptr;
-//
-//	UInputAction* IA_Trigger_Left = nullptr;
-//	UInputAction* IA_Trigger_Right = nullptr;
-//
-//UInputAction* IA_Point_Left = nullptr;
-//UInputAction* IA_Point_Right = nullptr;
+UCLASS()
+class SIMPLEVRPROJECT_API UVRHandsInputDataConfig : public UObject
+{
+	GENERATED_BODY()
 
-//UInputAction* IA_IndexCurl_Left = nullptr;
-//UInputAction* IA_IndexCurl_Right = nullptr;
+public:
+	UVRHandsInputDataConfig();
 
-//UInputAction* IA_Thumb_Left = nullptr;
-//UInputAction* IA_Thumb_Right = nullptr;
-//};
+	UInputMappingContext* InputMappingContext = nullptr;
+
+public:
+	UInputAction* IA_Grab_Left = nullptr;
+	UInputAction* IA_Grab_Right = nullptr;
+
+	UInputAction* IA_Trigger_Left = nullptr;
+	UInputAction* IA_Trigger_Right = nullptr;
+
+	UInputAction* IA_Point_Left = nullptr;
+	UInputAction* IA_Point_Right = nullptr;
+
+	UInputAction* IA_IndexCurl_Left = nullptr;
+	UInputAction* IA_IndexCurl_Right = nullptr;
+
+	UInputAction* IA_Thumb_Left = nullptr;
+	UInputAction* IA_Thumb_Right = nullptr;
+};
 
 UCLASS()
 class SIMPLEVRPROJECT_API UHandGraph : public UActorComponent
