@@ -10,10 +10,17 @@ class UCameraComponent;
 struct FInputActionValue;
 class UMotionControllerComponent;
 class UVRHandSkeletalMeshComponent;
+class UHandGraph;
+
+static inline const FName LeftGrip = TEXT("LeftGrip");
+static inline const FName LeftAim = TEXT("LeftAim");
+static inline const FName RightGrip = TEXT("RightGrip");
+static inline const FName RightAim = TEXT("RightAim");
 
 UCLASS()
 class SIMPLEVRPROJECT_API AVRCharacter : public ACharacter
 {
+	friend class UHandGraph;
 	GENERATED_BODY()
 
 public:
@@ -47,4 +54,9 @@ protected:
 	UVRHandSkeletalMeshComponent* LeftHand;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UVRHandSkeletalMeshComponent* RightHand;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UHandGraph* HandGraphLeft;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UHandGraph* HandGraphRight;
 };

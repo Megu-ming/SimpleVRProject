@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/HandGraph.h"
 
 // Sets default values
 AVRCharacter::AVRCharacter()
@@ -34,6 +35,9 @@ AVRCharacter::AVRCharacter()
 	LeftHand->SetupAttachment(MotionControllerLeft);
 	RightHand = CreateDefaultSubobject<UVRHandSkeletalMeshComponent>(TEXT("RightHand"));
 	RightHand->SetupAttachment(MotionControllerRight);
+
+	HandGraphLeft = CreateDefaultSubobject<UHandGraph>(TEXT("HandGraphLeft"));
+	HandGraphRight = CreateDefaultSubobject<UHandGraph>(TEXT("HandGraphRight"));
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> Class(TEXT("/Script/Engine.AnimBlueprint'/Game/StartMap/Hand/BPA_Hands.BPA_Hands_C'"));
 	check(Class.Class);
@@ -67,10 +71,13 @@ void AVRCharacter::BeginPlay()
 			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
 
 		const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
-		//Subsystem->AddMappingContext(BasicInputDataConfig->InputMappingContext, 0);
+		Subsystem->AddMappingContext(BasicInputDataConfig->InputMappingContext, 0);
 
 		/*const UHandInputDataConfig* VRInputDataConfig = GetDefault<UHandInputDataConfig>();
 		Subsystem->AddMappingContext(VRInputDataConfig->InputMappingContext, 0);*/
+
+		const UVRHandsAnimationInputDataConfig* VRHandsAnimationInputDataConfig = GetDefault<UVRHandsAnimationInputDataConfig>();
+		Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
 	}
 	else { check(false); }
 }
@@ -90,8 +97,14 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	ensure(EnhancedInputComponent);
 
-	const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
-	//EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnMove);
+	{
+		const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnMove);
+	}
+	{
+		HandGraphLeft->SetupPlayerInputComponent(MotionControllerLeft, EnhancedInputComponent);
+		HandGraphRight->SetupPlayerInputComponent(MotionControllerRight, EnhancedInputComponent);
+	}
 }
 
 void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)

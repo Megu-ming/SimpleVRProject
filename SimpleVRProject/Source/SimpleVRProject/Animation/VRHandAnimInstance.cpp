@@ -34,5 +34,5 @@ void UVRHandAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	CurrentPoseAlphaPoint = UKismetMathLibrary::FInterpTo(CurrentPoseAlphaPoint, PoseAlphaPoint, DeltaSeconds, 13.0);
-	CurrentPoseThumb = UKismetMathLibrary::FInterpTo(CurrentPoseThumb, PoseAlphaThumb, DeltaSeconds, 13.0);
+	CurrentPoseAlphaThumb = UKismetMathLibrary::FInterpTo(CurrentPoseAlphaThumb, PoseAlphaThumb, DeltaSeconds, 13.0);
 }

@@ -12,6 +12,7 @@
 UCLASS()
 class SIMPLEVRPROJECT_API UVRHandAnimInstance : public UAnimInstance
 {
+	friend class UHandGraph;
 	GENERATED_BODY()
 
 protected:
@@ -33,5 +34,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PoseAlphaThumb = 1.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CurrentPoseThumb = 1.f;
+	float CurrentPoseAlphaThumb = 1.f;
 };

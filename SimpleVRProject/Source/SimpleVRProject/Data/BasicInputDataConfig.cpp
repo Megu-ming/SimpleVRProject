@@ -7,17 +7,16 @@
 
 UBasicInputDataConfig::UBasicInputDataConfig()
 {
-	/*{
+	{
 		static ConstructorHelpers::FObjectFinder<UInputMappingContext> Asset
-		{ TEXT("/Script/EnhancedInput.InputMappingContext'/Game/StartMap/Hand/Input/IMC_Lobby.IMC_Lobby'") };
+		{ TEXT("/Script/EnhancedInput.InputMappingContext'/Game/StartMap/Hand/Input/Basic/IMC_Basic.IMC_Basic'") };
 		check(Asset.Succeeded());
 		InputMappingContext = Asset.Object;
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
-		{ TEXT("/Script/EnhancedInput.InputAction'/Game/KDT2/Blueprint/Lobby/Input/IA_Move.IA_Move'") };
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/StartMap/Hand/Input/Basic/IA_Move.IA_Move'") };
 		check(Asset.Succeeded());
 		Move = Asset.Object;
 	}
-	*/
 }
