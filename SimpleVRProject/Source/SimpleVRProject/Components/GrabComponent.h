@@ -54,6 +54,5 @@ protected:
 	bool bKeepWorld = false;
 	UMotionControllerComponent* GrabMotionController;
 	TArray<UPrimitiveComponent*> OwnerPrimitiveComponents;
-	TArray<FTransform> OwnerPremitiveInitTransforms;
-
+	TArray<FTransform> OwnerPrimitiveInitTransforms;
 };

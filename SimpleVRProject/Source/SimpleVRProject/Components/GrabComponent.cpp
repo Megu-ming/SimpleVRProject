@@ -14,10 +14,10 @@ UGrabComponent::UGrabComponent()
 	if (!Owner) { return; }
 	Owner->GetComponents(UPrimitiveComponent::StaticClass(), OwnerPrimitiveComponents);
 
-	OwnerPremitiveInitTransforms.Reserve(OwnerPrimitiveComponents.Num());
+	OwnerPrimitiveInitTransforms.Reserve(OwnerPrimitiveComponents.Num());
 	for (UPrimitiveComponent* It : OwnerPrimitiveComponents)
 	{
-		OwnerPremitiveInitTransforms.Add(It->GetRelativeTransform());
+		OwnerPrimitiveInitTransforms.Add(It->GetRelativeTransform());
 	}
 }
 
@@ -53,7 +53,7 @@ void UGrabComponent::Grab(UMotionControllerComponent* NewMotionControllerCompone
 	for (int32 i = 0; i < Num; ++i)
 	{
 		UPrimitiveComponent* It = OwnerPrimitiveComponents[i];
-		const FTransform OwnerTransform = OwnerPremitiveInitTransforms[i];
+		const FTransform OwnerTransform = OwnerPrimitiveInitTransforms[i];
 
 		// GrabComponent의 회전값이 보정된 Transform
 		const FTransform GrabComponentRotationAdjustedTransform = UKismetMathLibrary::ComposeTransforms(OwnerTransform, GrabComponentRotationTransform);

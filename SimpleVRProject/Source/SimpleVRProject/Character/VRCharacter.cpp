@@ -165,5 +165,12 @@ void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerCom
 
 void AVRCharacter::OnGrabCompleted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
 {
+	UGrabComponent** TargetGrabComponentPointer = bLeft ? &LeftHandAttachedGrabComponent : &RightHandAttachedGrabComponent;
+	UGrabComponent* TargetGrabComponent = *TargetGrabComponentPointer;
+	if (!IsValid(TargetGrabComponent)) { return; }
+
+	TargetGrabComponent->ReleaseGrab();
+
+	*TargetGrabComponentPointer = nullptr;
 }
 
