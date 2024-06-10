@@ -4,6 +4,7 @@
 #include "Components/GrabComponent.h"
 #include "MotionControllerComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Components/WeaponActorComponent.h"
 
 // Sets default values for this component's properties
 UGrabComponent::UGrabComponent()
@@ -18,6 +19,14 @@ UGrabComponent::UGrabComponent()
 	for (UPrimitiveComponent* It : OwnerPrimitiveComponents)
 	{
 		OwnerPrimitiveInitTransforms.Add(It->GetRelativeTransform());
+	}
+}
+
+void UGrabComponent::SetData(const FVRWeaponDataTableRow* VRWeaponDataTableRow)
+{
+	for (auto& It : OwnerPrimitiveInitTransforms)
+	{
+		It = VRWeaponDataTableRow->MeshTransform;
 	}
 }
 

@@ -30,6 +30,8 @@ public:
 	// Sets default values for this component's properties
 	UGrabComponent();
 
+	void SetData(const struct FVRWeaponDataTableRow* VRWeaponDataTableRow);
+
 	UFUNCTION(BlueprintCallable)
 	void Grab(UMotionControllerComponent* NewMotionControllerComponent);
 	UFUNCTION(BlueprintCallable)

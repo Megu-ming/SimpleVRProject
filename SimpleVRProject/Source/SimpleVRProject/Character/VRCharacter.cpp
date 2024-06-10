@@ -145,7 +145,7 @@ void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerCom
 	TArray<FHitResult> HitResults;
 	UKismetSystemLibrary::SphereTraceMultiForObjects(this, WorldLocation, WorldLocation,
 		Radius, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResults, true);
-
+	
 	for (FHitResult& It : HitResults)
 	{
 		AActor* HitActor = It.HitObjectHandle.GetManagingActor();
