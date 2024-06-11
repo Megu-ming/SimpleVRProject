@@ -16,12 +16,12 @@ AWeapon::AWeapon()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	StaticMeshComponent->SetupAttachment(GetRootComponent());
 	StaticMeshComponent->SetSimulatePhysics(true);
-	StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
+	StaticMeshComponent->SetCollisionProfileName(TEXT("Weapon"));
 	
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
 	SkeletalMeshComponent->SetSimulatePhysics(true);
-	SkeletalMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
+	SkeletalMeshComponent->SetCollisionProfileName(TEXT("Weapon"));
 
 	GrabComponent = CreateDefaultSubobject<UGrabComponent>(TEXT("GrabComponent"));
 	GrabComponent->SetupAttachment(GetRootComponent());

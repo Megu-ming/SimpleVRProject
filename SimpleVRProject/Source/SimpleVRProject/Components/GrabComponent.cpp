@@ -37,7 +37,7 @@ void UGrabComponent::Grab(UMotionControllerComponent* NewMotionControllerCompone
 	GrabMotionController = NewMotionControllerComponent;
 
 	AActor* Owner = GetOwner();
-	Owner->SetActorEnableCollision(false);
+	//Owner->SetActorEnableCollision(false);
 
 	{
 		APawn* PawnOwner = Cast<APawn>(GrabMotionController->GetOwner());

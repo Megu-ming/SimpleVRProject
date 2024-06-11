@@ -44,7 +44,7 @@ protected:
 		UMotionControllerComponent* InMotionControllerComponent);
 	bool CanGrab(FHitResult& OutResult);
 	const float TraceDist = 1000.f;
-	const float GrabDist = 200.f;
+	const float GrabDist = 300.f;
 
 protected:
 	void OnMove(const FInputActionValue& InputActionValue);
