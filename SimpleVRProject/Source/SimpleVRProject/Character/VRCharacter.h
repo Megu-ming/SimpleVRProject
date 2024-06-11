@@ -40,6 +40,13 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
+	bool PerformLineTrace(FHitResult& OutResult,
+		UMotionControllerComponent* InMotionControllerComponent);
+	bool CanGrab(FHitResult& OutResult);
+	const float TraceDist = 1000.f;
+	const float GrabDist = 200.f;
+
+protected:
 	void OnMove(const FInputActionValue& InputActionValue);
 
 	void OnGrabLeftStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerLeft, true, InputActionValue); }

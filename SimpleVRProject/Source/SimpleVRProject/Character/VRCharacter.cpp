@@ -89,6 +89,12 @@ void AVRCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	FVector Start = MotionControllerLeft->GetComponentLocation();
+	FVector ForwardVector = MotionControllerLeft->GetForwardVector();
+	FVector RightVector = MotionControllerLeft->GetRightVector();
+	FVector Cross = -ForwardVector.Cross(RightVector);
+	FVector End = (Cross * TraceDist) + Start;
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false);
 }
 
 // Called to bind functionality to input
@@ -117,6 +123,42 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	}
 }
 
+bool AVRCharacter::PerformLineTrace(FHitResult& OutResult, 
+	UMotionControllerComponent* InMotionControllerComponent)
+{
+	UMotionControllerComponent* MotionController = InMotionControllerComponent;
+	FVector Start = MotionController->GetComponentLocation();
+	FVector ForwardVector = MotionController->GetForwardVector();
+	FVector RightVector = MotionController->GetRightVector();
+	FVector Cross = -ForwardVector.Cross(RightVector);
+	FVector End = (Cross * TraceDist) + Start;
+
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(this);
+	bool result =  GetWorld()->LineTraceSingleByChannel(OutResult, Start, End,
+		ECollisionChannel::ECC_PhysicsBody, TraceParams);
+
+	// Debug
+	DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 3.f, 0, 1.f);
+	
+	return result;
+}
+
+bool AVRCharacter::CanGrab(FHitResult& OutResult)
+{
+	AActor* HitActor = OutResult.HitObjectHandle.GetManagingActor();
+	if (!HitActor) { return false; }
+
+	UGrabComponent* GrabComponent = HitActor->GetComponentByClass<UGrabComponent>();
+	if (!GrabComponent) { return false; }
+
+	const float Distance = GetDistanceTo(HitActor);
+	if (Distance <= GrabDist)
+		return true;
+	else
+		return false;
+}
+
 void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)
 {
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
@@ -138,28 +180,46 @@ void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)
 
 void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
 {
+	FHitResult LineTraceResult;
+	bool bIsLineTraceSuccess = PerformLineTrace(LineTraceResult, MotionControllerComponent);
+
 	const FVector WorldLocation = MotionControllerComponent->GetComponentLocation();
 	const float Radius = 60.f;
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody) };
 	TArray<AActor*> ActorsToIgnore;
 	TArray<FHitResult> HitResults;
-	UKismetSystemLibrary::SphereTraceMultiForObjects(this, WorldLocation, WorldLocation,
+	bool bIsSphereTraceSuccess = UKismetSystemLibrary::SphereTraceMultiForObjects(this, WorldLocation, WorldLocation,
 		Radius, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResults, true);
-	
-	for (FHitResult& It : HitResults)
+	if (bIsLineTraceSuccess && CanGrab(LineTraceResult))
 	{
-		AActor* HitActor = It.HitObjectHandle.GetManagingActor();
-		if (!HitActor) { continue; }
+		AActor* HitActor = LineTraceResult.HitObjectHandle.GetManagingActor();
+		if (!HitActor) { return; }
 
 		UGrabComponent* GrabComponent = HitActor->GetComponentByClass<UGrabComponent>();
-		if (!GrabComponent) { continue; }
+		if (!GrabComponent) { return; }
 
 		GrabComponent->Grab(MotionControllerComponent);
 
 		bLeft ? LeftHandAttachedGrabComponent = GrabComponent : RightHandAttachedGrabComponent = GrabComponent;
-
-		// HitActor->Destroy();
+		
 		return;
+	}
+	else if (bIsSphereTraceSuccess)
+	{
+		for (FHitResult& It : HitResults)
+		{
+			AActor* HitActor = It.HitObjectHandle.GetManagingActor();
+			if (!HitActor) { continue; }
+
+			UGrabComponent* GrabComponent = HitActor->GetComponentByClass<UGrabComponent>();
+			if (!GrabComponent) { continue; }
+
+			GrabComponent->Grab(MotionControllerComponent);
+
+			bLeft ? LeftHandAttachedGrabComponent = GrabComponent : RightHandAttachedGrabComponent = GrabComponent;
+
+			return;
+		}
 	}
 }
 
