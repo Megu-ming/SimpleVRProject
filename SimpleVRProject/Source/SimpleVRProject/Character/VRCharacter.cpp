@@ -146,7 +146,7 @@ bool AVRCharacter::PerformLineTrace(FHitResult& OutResult,
 
 bool AVRCharacter::CanGrab(FHitResult& OutResult)
 {
-	AActor* HitActor = OutResult.HitObjectHandle.GetManagingActor();
+	AActor* HitActor = OutResult.HitObjectHandle.GetManagingActor();;
 	if (!HitActor) { return false; }
 
 	UGrabComponent* GrabComponent = HitActor->GetComponentByClass<UGrabComponent>();
@@ -184,20 +184,24 @@ void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerCom
 	bool bIsLineTraceSuccess = PerformLineTrace(LineTraceResult, MotionControllerComponent);
 
 	const FVector WorldLocation = MotionControllerComponent->GetComponentLocation();
-	const float Radius = 60.f;
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_PhysicsBody) };
+	const float Radius = 50.f;
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes{ UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_GameTraceChannel2) };
 	TArray<AActor*> ActorsToIgnore;
 	TArray<FHitResult> HitResults;
-	bool bIsSphereTraceSuccess = UKismetSystemLibrary::SphereTraceMultiForObjects(this, WorldLocation, WorldLocation,
+	const bool bIsSphereTraceSuccess = UKismetSystemLibrary::SphereTraceMultiForObjects(this, WorldLocation, WorldLocation,
 		Radius, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResults, true);
-	if (bIsLineTraceSuccess && CanGrab(LineTraceResult))
+	AActor* DebugActor = LineTraceResult.GetActor();
+	if(DebugActor)
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *DebugActor->GetName());
+	const bool bCanGrab = CanGrab(LineTraceResult);
+	if (bIsLineTraceSuccess && bCanGrab)
 	{
-		AActor* HitActor = LineTraceResult.HitObjectHandle.GetManagingActor();
-		if (!HitActor) { return; }
+		AActor* HitActor = LineTraceResult.HitObjectHandle.GetManagingActor(); //LineTraceResult.HitObjectHandle.GetManagingActor();
+		//if (!HitActor) { return; }
 
 		UGrabComponent* GrabComponent = HitActor->GetComponentByClass<UGrabComponent>();
 		if (!GrabComponent) { return; }
-
+		
 		GrabComponent->Grab(MotionControllerComponent);
 
 		bLeft ? LeftHandAttachedGrabComponent = GrabComponent : RightHandAttachedGrabComponent = GrabComponent;

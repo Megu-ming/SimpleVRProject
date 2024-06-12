@@ -11,9 +11,10 @@ public class SimpleVRProject : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[]
 		{ "Core", "CoreUObject", "Engine", "InputCore",
 			"HeadMountedDisplay",
-			"EnhancedInput"
+			"EnhancedInput",
+            "ProceduralMeshComponent"
 
-		});
+        });
 
 		if(Target.Type == TargetType.Editor)
 		{
