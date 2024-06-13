@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/WidgetComponent.h"
 #include "BulletDispenser.generated.h"
 
 UCLASS()
@@ -23,4 +24,23 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void PlayAnimation();
+
+private:
+	FTimerHandle AnimationTimerHandle;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* FireMontage = nullptr;
+	UPROPERTY(EditAnywhere)
+	float DelayTime = 5.f;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* DefaultScene;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMeshComponent* SkeletalMeshComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UWidgetComponent* WidgetComponent;
+
+	
+	//TArray<AProjectile*> Projectiles;
 };

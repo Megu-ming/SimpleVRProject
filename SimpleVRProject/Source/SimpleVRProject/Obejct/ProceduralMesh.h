@@ -25,6 +25,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UProceduralMeshComponent* GetProceduralMeshComponent() { return ProceduralMeshComponent; }
+	UStaticMeshComponent* GetStaticMeshComponent() { return StaticMeshComponent; }
+
 protected:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, 

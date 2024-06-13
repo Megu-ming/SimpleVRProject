@@ -12,7 +12,8 @@ public class SimpleVRProject : ModuleRules
 		{ "Core", "CoreUObject", "Engine", "InputCore",
 			"HeadMountedDisplay",
 			"EnhancedInput",
-            "ProceduralMeshComponent"
+            "ProceduralMeshComponent",
+			"UMG"
 
         });
 
