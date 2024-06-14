@@ -18,9 +18,9 @@ struct FProjectileDataTableRow : public FTableRowBase
 	FTransform BulletProceduralMeshTransform;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile|Bullet")
-	float ProjectileSpeed = 2000.f;
+	float ProjectileSpeed = 1000.f;
 	UPROPERTY(EditAnywhere, Category = "Projectile|Bullet")
-	float ProjectileGravityScale = 0.f;
+	UParticleSystem* GunShotEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile\Eject")
 	UStaticMesh* EjectStaticMesh;
@@ -39,10 +39,27 @@ class SIMPLEVRPROJECT_API AProjectile : public AProceduralMesh
 public:
 	AProjectile();
 
-	void Init(UStaticMesh* const Mesh, const FTransform& InTransform, const FVector& InImpulse);
+	void Init(UStaticMesh* const Mesh, 
+		const FTransform& InTransform, 
+		const FVector& InImpulse,
+		UParticleSystem* ParticleSystem);
 
-	
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
 
+	virtual void SetData() override;
+
+public:
+	UFUNCTION()
+	void OnHitAnyObject(UPrimitiveComponent* HitComponent, 
+		AActor* OtherActor, UPrimitiveComponent* OtherComp, 
+		FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION()
+	void OnParticleSpawned(FName EventName, float EmitterTime, FVector Location, FVector Velocity);
+
+protected:
+	UPROPERTY(EditAnywhere)
+	UParticleSystemComponent* HitEffectParticleSystemComponent;
+	UDataTable* DataTable;
 };

@@ -13,12 +13,15 @@ AProceduralMesh::AProceduralMesh()
 
 	ProceduralMeshComponent = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralMeshComponent"));
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
+	SliceParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SliceParticleSystemComponent"));
 	
+	SetRootComponent(ProceduralMeshComponent);
+	StaticMeshComponent->SetupAttachment(GetRootComponent());
+
 	ProceduralMeshComponent->bUseComplexAsSimpleCollision = false;
 	ProceduralMeshComponent->SetSimulatePhysics(true);
 	ProceduralMeshComponent->SetNotifyRigidBodyCollision(true);
 	ProceduralMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
-	ProceduralMeshComponent->AddImpulse(FVector(200, 200, 200));
 
 	StaticMeshComponent->SetSimulatePhysics(true);
 	StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
@@ -29,6 +32,8 @@ void AProceduralMesh::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+	SetData();
+	
 	UKismetProceduralMeshLibrary::
 		CopyProceduralMeshFromStaticMeshComponent(StaticMeshComponent, 0, ProceduralMeshComponent, true);
 }
@@ -38,7 +43,21 @@ void AProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetData();
 	ProceduralMeshComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
+}
+
+void AProceduralMesh::SetData()
+{
+	if (ProceduralMeshDataTableRowHandle.IsNull()) { return; }
+
+	FProceduralMeshDataTableRow* ProceduralMeshDataTableRow = ProceduralMeshDataTableRowHandle.GetRow<FProceduralMeshDataTableRow>(TEXT(""));
+	if (!ProceduralMeshDataTableRow) { ensure(false); return; }
+
+	MeshType = ProceduralMeshDataTableRow->MeshType;
+	StaticMeshComponent->SetStaticMesh(ProceduralMeshDataTableRow->StaticMesh);
+	SliceParticleSystemComponent->SetTemplate(ProceduralMeshDataTableRow->SliceEffect);
+	ProceduralMeshComponent->SetMassOverrideInKg(NAME_None, ProceduralMeshDataTableRow->Mass, true);
 }
 
 // Called every frame
@@ -55,6 +74,8 @@ void AProceduralMesh::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		FVector PlanePosition = Hit.Location;
 		FVector PlaneNormal = Weapon->GetSkeletalMeshComponent()->GetForwardVector();
 		UProceduralMeshComponent* NewMesh;
+		SliceParticleSystemComponent->SetWorldLocation(Hit.Location);
+		SliceParticleSystemComponent->Activate();
 		UKismetProceduralMeshLibrary::SliceProceduralMesh(ProceduralMeshComponent, PlanePosition, -PlaneNormal, true,
 			NewMesh, EProcMeshSliceCapOption::CreateNewSectionForCap, nullptr);
 		
