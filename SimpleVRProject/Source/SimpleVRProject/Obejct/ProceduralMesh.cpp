@@ -32,7 +32,7 @@ void AProceduralMesh::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	SetData();
+	SetData(ProceduralMeshDT);
 	
 	UKismetProceduralMeshLibrary::
 		CopyProceduralMeshFromStaticMeshComponent(StaticMeshComponent, 0, ProceduralMeshComponent, true);
@@ -43,16 +43,24 @@ void AProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetData();
+	//SetData();
 	ProceduralMeshComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
 }
 
-void AProceduralMesh::SetData()
+void AProceduralMesh::SetData(FDataTableRowHandle& InProceduralMeshDataTableRowHandle)
 {
-	if (ProceduralMeshDataTableRowHandle.IsNull()) { return; }
+	ProceduralMeshDT = InProceduralMeshDataTableRowHandle;
 
-	FProceduralMeshDataTableRow* ProceduralMeshDataTableRow = ProceduralMeshDataTableRowHandle.GetRow<FProceduralMeshDataTableRow>(TEXT(""));
-	if (!ProceduralMeshDataTableRow) { ensure(false); return; }
+	if (ProceduralMeshDT.IsNull()) { return; }
+	if (ProceduralMeshDT.RowName == NAME_None) { return; }
+
+	ProceduralMeshDataTableRow = ProceduralMeshDT.GetRow<FProceduralMeshDataTableRow>(TEXT(""));
+	SetData(ProceduralMeshDataTableRow);
+}
+
+void AProceduralMesh::SetData(FProceduralMeshDataTableRow* InDataTableRow)
+{
+	if (!InDataTableRow) { ensure(false); return; }
 
 	MeshType = ProceduralMeshDataTableRow->MeshType;
 	StaticMeshComponent->SetStaticMesh(ProceduralMeshDataTableRow->StaticMesh);

@@ -36,30 +36,13 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 			EjectCartridge->Init(ProjectileDT->EjectStaticMesh, Impulse);
 		}
-		{
-			//const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
-
-			AProjectile* Bullet = MeshComp->GetWorld()->SpawnActorDeferred<AProjectile>
-				(AProjectile::StaticClass(), MuzzleFlashTransform);
-
-			const FVector ForwardVector = Bullet->GetActorForwardVector();
-			const float BulletSpeed = ProjectileDT->ProjectileSpeed;
-			const FVector Impulse = ForwardVector * BulletSpeed;
-
-			Bullet->Init(ProjectileDT, Impulse);
-
-			const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
-
-			Bullet->FinishSpawning(FinalTransform, true);
-			Bullet->GetProceduralMeshComponent()->AddImpulse(Impulse);
-		}
 		return;
 	}
 #endif
 	ABulletDispenser* Dispenser = Cast<ABulletDispenser>(OwnerActor);   
 	check(Dispenser);
 	Dispenser->SpawnEjectCartridge(AmmoEjectTransform);
-	//Dispenser->SpawnProjectile(MuzzleFlashTransform);
+	Dispenser->SpawnProjectile(MuzzleFlashTransform);
 	/*if (EditorPreviewBulletDataTable.IsNull()) { return; }
 
 	FProjectileDataTableRow* ProjectileDT = EditorPreviewBulletDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));

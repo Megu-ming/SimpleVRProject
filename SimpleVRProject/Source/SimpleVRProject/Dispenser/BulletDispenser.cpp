@@ -103,7 +103,13 @@ void ABulletDispenser::SpawnProjectile(const FTransform& InTransform)
 			}
 
 			FProjectileDataTableRow* ProjectileDataTableRow = DispenserDataTableRow->ProjectileDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
+			FProceduralMeshDataTableRow* ProceduralMeshDataTableRow = DispenserDataTableRow->ProjectileMeshTypeDataTable.GetRow<FProceduralMeshDataTableRow>(TEXT(""));
 			if (!ProjectileDataTableRow)
+			{
+				check(false);
+				return;
+			}
+			if (!ProceduralMeshDataTableRow)
 			{
 				check(false);
 				return;
@@ -112,14 +118,19 @@ void ABulletDispenser::SpawnProjectile(const FTransform& InTransform)
 			/*UPrimitiveComponent* PrimitiveComponent = IsValid(SkeletalMeshComponent->GetSkeletalMeshAsset()) ?
 				Cast<UPrimitiveComponent>(SkeletalMeshComponent) : StaticMeshComponent;
 			FTransform Transform = VRWeaponDataTableRow->MeshTransform.Inverse() * PrimitiveComponent->GetComponentTransform();*/
+			AProjectile* Projectile = Cast<AProjectile>(NewActor);
+			if (!Projectile) { ensure(false); return; }
+			Projectile->GetProceduralMeshComponent()->SetSimulatePhysics(true);
+			if(!Projectile->bInitialized)
+			{
+				const FVector ForwardVector = InTransform.GetUnitAxis(EAxis::X);
+				const float BulletSpeed = ProjectileDataTableRow->ProjectileSpeed;
+				const float RandSpeed = FMath::RandRange(BulletSpeed - 5, BulletSpeed + 5);
+				const FVector Impulse = ForwardVector * RandSpeed;
 
-			const FVector ForwardVector = InTransform.GetUnitAxis(EAxis::X);
-			const float BulletSpeed = ProjectileDataTableRow->ProjectileSpeed;
-			const float RandSpeed = FMath::RandRange(BulletSpeed - 10, BulletSpeed + 10);
-			const FVector Impulse = ForwardVector * RandSpeed;
-
-			UE_LOG(LogTemp, Warning, TEXT("SetProjectileData %s"), *NewActor->GetName());
-			NewActor->Init(ProjectileDataTableRow, Impulse);
+				UE_LOG(LogTemp, Warning, TEXT("SetProjectileData %s"), *NewActor->GetName());
+				NewActor->Init(ProjectileDataTableRow, ProceduralMeshDataTableRow, Impulse);
+			}
 		}, true, this
 	);
 }

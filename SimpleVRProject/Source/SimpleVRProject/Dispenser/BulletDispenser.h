@@ -15,6 +15,8 @@ struct FDispenserDataTableRow : public FTableRowBase
 
 	UPROPERTY(Category = "Projectile", EditAnywhere, meta = (RowType = "/Script/SIMPLEVRPROJECT.ProjectileDataTableRow"))
 	FDataTableRowHandle ProjectileDataTable;
+	UPROPERTY(Category = "Projectile", EditAnywhere, meta = (RowType = "/Script/SIMPLEVRPROJECT.ProceduralMeshDataTableRow"))
+	FDataTableRowHandle ProjectileMeshTypeDataTable;
 
 	UPROPERTY(EditAnywhere, Category = "Dispenser")
 	UAnimMontage* FireMontage;

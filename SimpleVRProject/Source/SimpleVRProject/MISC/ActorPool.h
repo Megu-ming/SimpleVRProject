@@ -10,6 +10,7 @@ struct FActorPool
 	~FActorPool();
 
 	void Create(UWorld* World, TSubclassOf<AActor> Class, uint32 Count);
+	void Create(UWorld* World, TSubclassOf<AActor> Class, FDataTableRowHandle& InDataTableRowHandle, uint32 Count);
 	void Destroy();
 
 	template<class T>

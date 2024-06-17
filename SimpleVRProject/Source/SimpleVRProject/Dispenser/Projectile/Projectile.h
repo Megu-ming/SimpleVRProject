@@ -37,13 +37,12 @@ class SIMPLEVRPROJECT_API AProjectile : public AProceduralMesh
 public:
 	AProjectile();
 
-	void Init(FProjectileDataTableRow* InDataTableRow, const FVector& InImpulse);
+	void Init(FProjectileDataTableRow* InDataTableRow, FProceduralMeshDataTableRow* InMeshDataTableRow, const FVector& InImpulse);
 
 protected:
-	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
 
-	virtual void SetData() override;
+	void SetData();
 
 public:
 	UFUNCTION()
@@ -53,8 +52,11 @@ public:
 	UFUNCTION()
 	void OnParticleSpawned(FName EventName, float EmitterTime, FVector Location, FVector Velocity);
 
+	bool bInitialized = false;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	UParticleSystemComponent* HitEffectParticleSystemComponent;
-	UDataTable* DataTable;
+	FProceduralMeshDataTableRow* MeshDataTableRow;
+
 };

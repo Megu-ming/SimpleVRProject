@@ -2,38 +2,36 @@
 
 
 #include "Dispenser/Projectile/Projectile.h"
+#include "KismetProceduralMeshLibrary.h"
 #include "Weapon/Weapon.h"
 
 AProjectile::AProjectile()
 {
-	{
-		static ConstructorHelpers::FObjectFinder<UDataTable> Asset(TEXT("/Script/Engine.DataTable'/Game/StartMap/DataTable/DT_Procedural.DT_Procedural'"));
-		ensure(Asset.Object);
-		DataTable = Asset.Object;
-	}
 	HitEffectParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("HitEffectParticleSystemComponent"));
 	ProceduralMeshComponent->SetCollisionProfileName(TEXT("Projectile"));
 }
 
-void AProjectile::Init(FProjectileDataTableRow* InDataTableRow, const FVector& InImpulse)
+void AProjectile::Init(FProjectileDataTableRow* InDataTableRow, FProceduralMeshDataTableRow* InMeshDataTableRow, const FVector& InImpulse)
 {
-	if (!InDataTableRow) { return; }
-	if (!IsValid(InDataTableRow->BulletStaticMesh)) { return; }
+	if (!InDataTableRow) { ensure(false); return; }
+	if (!IsValid(InDataTableRow->BulletStaticMesh)) { ensure(false); return; }
+	if (!InMeshDataTableRow) { ensure(false); return; }
+
+	MeshDataTableRow = InMeshDataTableRow;
 
 	ProceduralMeshComponent->SetRelativeScale3D(InDataTableRow->BulletProceduralMeshTransform.GetScale3D());
 	ProceduralMeshComponent->SetRelativeRotation(InDataTableRow->BulletProceduralMeshTransform.GetRotation());
-	//ProceduralMeshComponent->AddImpulse(InImpulse);
 	StaticMeshComponent->SetStaticMesh(InDataTableRow->BulletStaticMesh);
+
+	UKismetProceduralMeshLibrary::
+		CopyProceduralMeshFromStaticMeshComponent(StaticMeshComponent, 0, ProceduralMeshComponent, true);
 
 	HitEffectParticleSystemComponent->SetTemplate(InDataTableRow->GunShotEffect);
 	HitEffectParticleSystemComponent->Deactivate();
 
 	SetData();
-}
 
-void AProjectile::OnConstruction(const FTransform& Transform)
-{
-	Super::OnConstruction(Transform);
+	ProceduralMeshComponent->AddImpulse(InImpulse);
 }
 
 void AProjectile::BeginPlay()
@@ -46,13 +44,8 @@ void AProjectile::BeginPlay()
 
 void AProjectile::SetData()
 {
-	Super::SetData();
-
-	FProceduralMeshDataTableRow* Data = DataTable->FindRow<FProceduralMeshDataTableRow>(FName("Projectile"), TEXT(""));
-	if (!Data) { ensure(false); return; }
-
-	MeshType = Data->MeshType;
-	SliceParticleSystemComponent->SetTemplate(Data->SliceEffect);
+	MeshType = MeshDataTableRow->MeshType;
+	SliceParticleSystemComponent->SetTemplate(MeshDataTableRow->SliceEffect);
 	SliceParticleSystemComponent->Deactivate();
 }
 

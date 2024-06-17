@@ -41,7 +41,8 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void SetData();
+	void SetData(FDataTableRowHandle& InProceduralMeshDataTableRowHandle);
+	void SetData(FProceduralMeshDataTableRow* InDataTableRow);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -57,7 +58,8 @@ protected:
 
 protected:
 	UPROPERTY(Category = "DataTable", EditAnywhere, meta = (RowType = "/Script/SIMPLEVRPROJECT.ProceduralMeshDataTableRow"))
-	FDataTableRowHandle ProceduralMeshDataTableRowHandle;
+	FDataTableRowHandle ProceduralMeshDT;
+	FProceduralMeshDataTableRow* ProceduralMeshDataTableRow;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
