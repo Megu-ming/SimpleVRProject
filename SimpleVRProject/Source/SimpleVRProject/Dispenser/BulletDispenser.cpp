@@ -54,6 +54,7 @@ void ABulletDispenser::SetData(const FDispenserDataTableRow* InDispenserDataTabl
 
 	FireMontage = DispenserDataTableRow->FireMontage;
 	SkeletalMeshComponent->SetSkeletalMeshAsset(DispenserDataTableRow->SkeletalMesh);
+	SkeletalMeshComponent->SetAnimInstanceClass(DispenserDataTableRow->AnimInstance);
 	DelayTime = DispenserDataTableRow->DelayTime;
 }
 

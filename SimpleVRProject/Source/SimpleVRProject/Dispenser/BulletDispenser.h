@@ -19,6 +19,8 @@ struct FDispenserDataTableRow : public FTableRowBase
 	FDataTableRowHandle ProjectileMeshTypeDataTable;
 
 	UPROPERTY(EditAnywhere, Category = "Dispenser")
+	TSubclassOf<UAnimInstance> AnimInstance;
+	UPROPERTY(EditAnywhere, Category = "Dispenser")
 	UAnimMontage* FireMontage;
 	UPROPERTY(EditAnywhere, Category = "Dispenser")
 	float DelayTime;
