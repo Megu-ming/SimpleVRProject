@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/WidgetComponent.h"
+#include "MISC/ActorPool.h"
 #include "BulletDispenser.generated.h"
 
 USTRUCT()
@@ -43,6 +44,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SpawnEjectCartridge(const FTransform& InEjectTransform);
+	void SpawnProjectile(const FTransform& InTransform);
+
 	void PlayAnimation();
 
 protected:
@@ -64,4 +68,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMeshComponent* SkeletalMeshComponent;
 	
+public:
+	FActorPool EjectCartridgePool;
+	FActorPool ProjectilePool;
+	//FActorPool EffectPool;
 };

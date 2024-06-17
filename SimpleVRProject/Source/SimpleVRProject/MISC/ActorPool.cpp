@@ -30,11 +30,11 @@ void FActorPool::Create(UWorld* World, TSubclassOf<AActor> Class, uint32 Count)
 
 		SpawnedActor->FinishSpawning(DefaultTransform, true);
 
-		const TSet<UActorComponent*>& Components = SpawnedActor->GetComponents();
+		/*const TSet<UActorComponent*>& Components = SpawnedActor->GetComponents();
 		for (UActorComponent* It : Components)
 		{
 			It->SetComponentTickEnabled(false);
-		}
+		}*/
 
 		Pool.Add(SpawnedActor);
 	}

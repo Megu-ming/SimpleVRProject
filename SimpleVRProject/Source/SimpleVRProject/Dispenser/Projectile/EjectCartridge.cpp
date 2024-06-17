@@ -14,7 +14,6 @@ AEjectCartridge::AEjectCartridge()
 
 	StaticMeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
 	StaticMeshComponent->SetSimulatePhysics(true);
-	SetLifeSpan(5.f);
 }
 
 void AEjectCartridge::Init(UStaticMesh* const Mesh, const FVector& InImpulse)

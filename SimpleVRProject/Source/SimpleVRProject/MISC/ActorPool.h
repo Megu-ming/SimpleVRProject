@@ -49,14 +49,14 @@ struct FActorPool
 			InitCallback(ActorT);
 		}
 
-		for (UActorComponent* It : Components)
+		/*for (UActorComponent* It : Components)
 		{
 			It->SetComponentTickEnabled(true);
 			if (!It->HasBeenInitialized())
 			{
 				It->InitializeComponent();
 			}
-		}
+		}*/
 
 		return ActorT;
 	}
@@ -72,7 +72,7 @@ struct FActorPool
 		ActiveActors.RemoveAt(Index);
 		Pool.Add(InActor);
 
-		if (UFunction* Function = InActor->FindFunction(TEXT("OnActorPoolBeginDelete")))
+		/*if (UFunction* Function = InActor->FindFunction(TEXT("OnActorPoolBeginDelete")))
 		{
 			InActor->ProcessEvent(Function, nullptr);
 		}
@@ -80,12 +80,12 @@ struct FActorPool
 		if (AActor* ParentActor = InActor->GetAttachParentActor())
 		{
 			InActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		}
+		}*/
 
 		InActor->SetActorEnableCollision(false);
 		InActor->SetActorHiddenInGame(true);
 		InActor->SetActorTickEnabled(false);
-		const TSet<UActorComponent*>& Components = InActor->GetComponents();
+		/*const TSet<UActorComponent*>& Components = InActor->GetComponents();
 		for (UActorComponent* It : Components)
 		{
 			It->SetComponentTickEnabled(false);
@@ -93,7 +93,7 @@ struct FActorPool
 			{
 				It->UninitializeComponent();
 			}
-		}
+		}*/
 	}
 
 	TArray<AActor*> Pool;

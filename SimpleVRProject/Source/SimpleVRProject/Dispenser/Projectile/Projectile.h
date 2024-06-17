@@ -37,10 +37,7 @@ class SIMPLEVRPROJECT_API AProjectile : public AProceduralMesh
 public:
 	AProjectile();
 
-	void Init(UStaticMesh* const Mesh, 
-		const FTransform& InTransform, 
-		const FVector& InImpulse,
-		UParticleSystem* ParticleSystem);
+	void Init(FProjectileDataTableRow* InDataTableRow, const FVector& InImpulse);
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;

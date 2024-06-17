@@ -2,6 +2,8 @@
 
 
 #include "Dispenser/BulletDispenser.h"
+#include "Projectile/EjectCartridge.h"
+#include "Projectile/Projectile.h"
 
 // Sets default values
 ABulletDispenser::ABulletDispenser()
@@ -28,6 +30,9 @@ void ABulletDispenser::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	EjectCartridgePool.Create(GetWorld(), AEjectCartridge::StaticClass(), 5);
+	ProjectilePool.Create(GetWorld(), AProjectile::StaticClass(), 5);
+	//EffectPool.Create(GetWorld(), AEffect::StaticClass(), 10);
 	SetData(DispenserDT);
 	GetWorld()->GetTimerManager().SetTimer(AnimationTimerHandle, this, &ThisClass::PlayAnimation, DelayTime, true, 2.f);
 }
@@ -57,6 +62,66 @@ void ABulletDispenser::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ABulletDispenser::SpawnEjectCartridge(const FTransform& InEjectTransform)
+{
+	EjectCartridgePool.New<AEjectCartridge>(InEjectTransform,
+		[this, InEjectTransform](AEjectCartridge* NewActor)
+		{
+			if (DispenserDataTableRow->ProjectileDataTable.IsNull())
+			{
+				check(false);
+				return;
+			}
+
+			FProjectileDataTableRow* ProjectileDataTableRow = DispenserDataTableRow->ProjectileDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
+			if (!ProjectileDataTableRow)
+			{
+				check(false);
+				return;
+			}
+
+			const FVector RightVector = NewActor->GetActorRightVector();
+			const double RandomVector = FMath::RandRange(50.0, 100.0);
+			const FVector Impulse = RightVector * RandomVector;
+
+			NewActor->Init(ProjectileDataTableRow->EjectStaticMesh, Impulse);
+		}
+	);
+}
+
+void ABulletDispenser::SpawnProjectile(const FTransform& InTransform)
+{
+	ProjectilePool.New<AProjectile>(InTransform,
+		[this, InTransform](AProjectile* NewActor)
+		{
+			if (DispenserDataTableRow->ProjectileDataTable.IsNull())
+			{
+				check(false);
+				return;
+			}
+
+			FProjectileDataTableRow* ProjectileDataTableRow = DispenserDataTableRow->ProjectileDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
+			if (!ProjectileDataTableRow)
+			{
+				check(false);
+				return;
+			}
+
+			/*UPrimitiveComponent* PrimitiveComponent = IsValid(SkeletalMeshComponent->GetSkeletalMeshAsset()) ?
+				Cast<UPrimitiveComponent>(SkeletalMeshComponent) : StaticMeshComponent;
+			FTransform Transform = VRWeaponDataTableRow->MeshTransform.Inverse() * PrimitiveComponent->GetComponentTransform();*/
+
+			const FVector ForwardVector = InTransform.GetUnitAxis(EAxis::X);
+			const float BulletSpeed = ProjectileDataTableRow->ProjectileSpeed;
+			const float RandSpeed = FMath::RandRange(BulletSpeed - 10, BulletSpeed + 10);
+			const FVector Impulse = ForwardVector * RandSpeed;
+
+			UE_LOG(LogTemp, Warning, TEXT("SetProjectileData %s"), *NewActor->GetName());
+			NewActor->Init(ProjectileDataTableRow, Impulse);
+		}, true, this
+	);
 }
 
 void ABulletDispenser::PlayAnimation()

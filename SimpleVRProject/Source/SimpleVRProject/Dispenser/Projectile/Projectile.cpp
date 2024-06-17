@@ -13,20 +13,19 @@ AProjectile::AProjectile()
 	}
 	HitEffectParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("HitEffectParticleSystemComponent"));
 	ProceduralMeshComponent->SetCollisionProfileName(TEXT("Projectile"));
-	
-	SetLifeSpan(5.f);
 }
 
-void AProjectile::Init(UStaticMesh* const Mesh, const FTransform& InTransform, const FVector& InImpulse, UParticleSystem* ParticleSystem)
+void AProjectile::Init(FProjectileDataTableRow* InDataTableRow, const FVector& InImpulse)
 {
-	if (!IsValid(Mesh)) { return; }
+	if (!InDataTableRow) { return; }
+	if (!IsValid(InDataTableRow->BulletStaticMesh)) { return; }
 
-	ProceduralMeshComponent->SetRelativeScale3D(InTransform.GetScale3D());
-	ProceduralMeshComponent->SetRelativeRotation(InTransform.GetRotation());
+	ProceduralMeshComponent->SetRelativeScale3D(InDataTableRow->BulletProceduralMeshTransform.GetScale3D());
+	ProceduralMeshComponent->SetRelativeRotation(InDataTableRow->BulletProceduralMeshTransform.GetRotation());
 	//ProceduralMeshComponent->AddImpulse(InImpulse);
-	StaticMeshComponent->SetStaticMesh(Mesh);
+	StaticMeshComponent->SetStaticMesh(InDataTableRow->BulletStaticMesh);
 
-	HitEffectParticleSystemComponent->SetTemplate(ParticleSystem);
+	HitEffectParticleSystemComponent->SetTemplate(InDataTableRow->GunShotEffect);
 	HitEffectParticleSystemComponent->Deactivate();
 
 	SetData();

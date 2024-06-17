@@ -46,7 +46,7 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 			const float BulletSpeed = ProjectileDT->ProjectileSpeed;
 			const FVector Impulse = ForwardVector * BulletSpeed;
 
-			Bullet->Init(ProjectileDT->BulletStaticMesh, ProjectileDT->BulletProceduralMeshTransform, Impulse, ProjectileDT->GunShotEffect);
+			Bullet->Init(ProjectileDT, Impulse);
 
 			const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
 
@@ -58,7 +58,9 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 #endif
 	ABulletDispenser* Dispenser = Cast<ABulletDispenser>(OwnerActor);   
 	check(Dispenser);
-	if (EditorPreviewBulletDataTable.IsNull()) { return; }
+	Dispenser->SpawnEjectCartridge(AmmoEjectTransform);
+	//Dispenser->SpawnProjectile(MuzzleFlashTransform);
+	/*if (EditorPreviewBulletDataTable.IsNull()) { return; }
 
 	FProjectileDataTableRow* ProjectileDT = EditorPreviewBulletDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
 	if (!ProjectileDT) { return; }
@@ -74,23 +76,23 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 		const FVector Impulse = RightVector * RandomVector;
 
 		EjectCartridge->Init(ProjectileDT->EjectStaticMesh, Impulse);
-	}
-	{
-		//const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
+	}*/
+	//{
+	//	//const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
 
-		AProjectile* Bullet = MeshComp->GetWorld()->SpawnActorDeferred<AProjectile>
-			(AProjectile::StaticClass(), MuzzleFlashTransform);
+	//	AProjectile* Bullet = MeshComp->GetWorld()->SpawnActorDeferred<AProjectile>
+	//		(AProjectile::StaticClass(), MuzzleFlashTransform);
 
-		const FVector ForwardVector = Bullet->GetActorForwardVector();
-		const float BulletSpeed = ProjectileDT->ProjectileSpeed;
-		const float RandSpeed = FMath::RandRange(BulletSpeed - 10, BulletSpeed + 10);
-		const FVector Impulse = ForwardVector * RandSpeed;
+	//	const FVector ForwardVector = Bullet->GetActorForwardVector();
+	//	const float BulletSpeed = ProjectileDT->ProjectileSpeed;
+	//	const float RandSpeed = FMath::RandRange(BulletSpeed - 10, BulletSpeed + 10);
+	//	const FVector Impulse = ForwardVector * RandSpeed;
 
-		Bullet->Init(ProjectileDT->BulletStaticMesh, ProjectileDT->BulletProceduralMeshTransform, Impulse, ProjectileDT->GunShotEffect);
-		
-		const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
-		
-		Bullet->FinishSpawning(FinalTransform, true);
-		Bullet->GetProceduralMeshComponent()->AddImpulse(Impulse);
-	}
+	//	Bullet->Init(ProjectileDT->BulletStaticMesh, ProjectileDT->BulletProceduralMeshTransform, Impulse, ProjectileDT->GunShotEffect);
+	//	
+	//	const FTransform FinalTransform = ProjectileDT->BulletProceduralMeshTransform * MuzzleFlashTransform;
+	//	
+	//	Bullet->FinishSpawning(FinalTransform, true);
+	//	Bullet->GetProceduralMeshComponent()->AddImpulse(Impulse);
+	//}
 }
