@@ -26,7 +26,8 @@ struct FProjectileDataTableRow : public FTableRowBase
 	UStaticMesh* EjectStaticMesh;
 	UPROPERTY(EditAnywhere, Category = "Projectile\Eject")
 	FTransform EjectStaticMeshTransform;
-
+	UPROPERTY(EditAnywhere, Category = "Projectile\Eject")
+	float EjectMass;
 };
 
 UCLASS()

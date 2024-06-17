@@ -6,7 +6,7 @@ FActorPool::FActorPool()
 
 FActorPool::~FActorPool()
 {
-	Destroy();
+	//Destroy();
 }
 
 void FActorPool::Create(UWorld* World, TSubclassOf<AActor> Class, uint32 Count)

@@ -34,22 +34,26 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 			const double RandomVector = FMath::RandRange(4.0, 10.0);
 			const FVector Impulse = RightVector * RandomVector;
 
-			EjectCartridge->Init(ProjectileDT->EjectStaticMesh, Impulse);
+			EjectCartridge->Init(ProjectileDT->EjectStaticMesh, Impulse, ProjectileDT->EjectMass);
 		}
 		return;
 	}
 #endif
 	ABulletDispenser* Dispenser = Cast<ABulletDispenser>(OwnerActor);   
 	check(Dispenser);
-	Dispenser->SpawnEjectCartridge(AmmoEjectTransform);
-	Dispenser->SpawnProjectile(MuzzleFlashTransform);
-	/*if (EditorPreviewBulletDataTable.IsNull()) { return; }
-
+	
+	if (EditorPreviewBulletDataTable.IsNull()) { return; }
 	FProjectileDataTableRow* ProjectileDT = EditorPreviewBulletDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
 	if (!ProjectileDT) { return; }
+	const FTransform FinalTransform = ProjectileDT->EjectStaticMeshTransform * AmmoEjectTransform;
+	
+	Dispenser->SpawnEjectCartridge(FinalTransform);
+	Dispenser->SpawnProjectile(MuzzleFlashTransform);
+	/*
+
+	
 
 	{
-		const FTransform FinalTransform = ProjectileDT->EjectStaticMeshTransform * AmmoEjectTransform;
 
 		AEjectCartridge* EjectCartridge = MeshComp->GetWorld()->SpawnActor<AEjectCartridge>(AEjectCartridge::StaticClass(),
 			FinalTransform);

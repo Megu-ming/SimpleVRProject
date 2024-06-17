@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	AEjectCartridge();
 
-	void Init(UStaticMesh* const Mesh, const FVector& InImpulse);
+	void Init(UStaticMesh* const Mesh, const FVector& InImpulse, const float InMass);
 
 protected:
 	UPROPERTY()

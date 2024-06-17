@@ -83,10 +83,10 @@ void ABulletDispenser::SpawnEjectCartridge(const FTransform& InEjectTransform)
 			}
 
 			const FVector RightVector = NewActor->GetActorRightVector();
-			const double RandomVector = FMath::RandRange(50.0, 100.0);
+			const double RandomVector = FMath::RandRange(15.0, 25.0);
 			const FVector Impulse = RightVector * RandomVector;
 
-			NewActor->Init(ProjectileDataTableRow->EjectStaticMesh, Impulse);
+			NewActor->Init(ProjectileDataTableRow->EjectStaticMesh, Impulse, ProjectileDataTableRow->EjectMass);
 		}
 	);
 }
@@ -125,7 +125,7 @@ void ABulletDispenser::SpawnProjectile(const FTransform& InTransform)
 			{
 				const FVector ForwardVector = InTransform.GetUnitAxis(EAxis::X);
 				const float BulletSpeed = ProjectileDataTableRow->ProjectileSpeed;
-				const float RandSpeed = FMath::RandRange(BulletSpeed - 5, BulletSpeed + 5);
+				const float RandSpeed = FMath::RandRange(BulletSpeed - 5, BulletSpeed);
 				const FVector Impulse = ForwardVector * RandSpeed;
 
 				UE_LOG(LogTemp, Warning, TEXT("SetProjectileData %s"), *NewActor->GetName());
