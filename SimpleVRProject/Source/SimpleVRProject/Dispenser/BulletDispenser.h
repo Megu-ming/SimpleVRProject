@@ -7,6 +7,22 @@
 #include "Components/WidgetComponent.h"
 #include "BulletDispenser.generated.h"
 
+USTRUCT()
+struct FDispenserDataTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(Category = "Projectile", EditAnywhere, meta = (RowType = "/Script/SIMPLEVRPROJECT.ProjectileDataTableRow"))
+	FDataTableRowHandle ProjectileDataTable;
+
+	UPROPERTY(EditAnywhere, Category = "Dispenser")
+	UAnimMontage* FireMontage;
+	UPROPERTY(EditAnywhere, Category = "Dispenser")
+	float DelayTime;
+	UPROPERTY(EditAnywhere, Category = "Dispenser")
+	USkeletalMesh* SkeletalMesh;
+};
+
 UCLASS()
 class SIMPLEVRPROJECT_API ABulletDispenser : public AActor
 {
@@ -17,14 +33,23 @@ public:
 	ABulletDispenser();
 
 protected:
-	// Called when the game starts or when spawned
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
+
+	void SetData(const FDataTableRowHandle& InDataTableRowHandle);
+	void SetData(const FDispenserDataTableRow* InDispenserDataTableRow);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void PlayAnimation();
+
+protected:
+	UPROPERTY(Category = "Projectile", EditAnywhere, meta = (RowType = "/Script/SIMPLEVRPROJECT.DispenserDataTableRow"))
+	FDataTableRowHandle DispenserDT;
+
+	const FDispenserDataTableRow* DispenserDataTableRow = nullptr;
 
 private:
 	FTimerHandle AnimationTimerHandle;
@@ -38,9 +63,5 @@ protected:
 	USceneComponent* DefaultScene;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMeshComponent* SkeletalMeshComponent;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UWidgetComponent* WidgetComponent;
-
 	
-	//TArray<AProjectile*> Projectiles;
 };

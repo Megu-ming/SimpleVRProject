@@ -11,11 +11,16 @@ ABulletDispenser::ABulletDispenser()
 
 	DefaultScene = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultScene"));
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 
 	SetRootComponent(DefaultScene);
 	SkeletalMeshComponent->SetupAttachment(GetRootComponent());
-	WidgetComponent->SetupAttachment(GetRootComponent());
+}
+
+void ABulletDispenser::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	SetData(DispenserDT);
 }
 
 // Called when the game starts or when spawned
@@ -23,7 +28,28 @@ void ABulletDispenser::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SetData(DispenserDT);
 	GetWorld()->GetTimerManager().SetTimer(AnimationTimerHandle, this, &ThisClass::PlayAnimation, DelayTime, true, 2.f);
+}
+
+void ABulletDispenser::SetData(const FDataTableRowHandle& InDataTableRowHandle)
+{
+	DispenserDT = InDataTableRowHandle;
+
+	if (DispenserDT.IsNull()) { return; }
+	if (DispenserDT.RowName == NAME_None) { return; }
+
+	DispenserDataTableRow = DispenserDT.GetRow<FDispenserDataTableRow>(TEXT(""));
+	SetData(DispenserDataTableRow);
+}
+
+void ABulletDispenser::SetData(const FDispenserDataTableRow* InDispenserDataTableRow)
+{
+	DispenserDataTableRow = InDispenserDataTableRow;
+
+	FireMontage = DispenserDataTableRow->FireMontage;
+	SkeletalMeshComponent->SetSkeletalMeshAsset(DispenserDataTableRow->SkeletalMesh);
+	DelayTime = DispenserDataTableRow->DelayTime;
 }
 
 // Called every frame

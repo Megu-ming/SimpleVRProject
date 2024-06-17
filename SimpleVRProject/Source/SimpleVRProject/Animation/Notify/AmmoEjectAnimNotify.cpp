@@ -44,8 +44,7 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 			const FVector ForwardVector = Bullet->GetActorForwardVector();
 			const float BulletSpeed = ProjectileDT->ProjectileSpeed;
-			const float RandSpeed = FMath::RandRange(BulletSpeed - 30, BulletSpeed + 30);
-			const FVector Impulse = ForwardVector * RandSpeed;
+			const FVector Impulse = ForwardVector * BulletSpeed;
 
 			Bullet->Init(ProjectileDT->BulletStaticMesh, ProjectileDT->BulletProceduralMeshTransform, Impulse, ProjectileDT->GunShotEffect);
 
@@ -84,7 +83,7 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 
 		const FVector ForwardVector = Bullet->GetActorForwardVector();
 		const float BulletSpeed = ProjectileDT->ProjectileSpeed;
-		const float RandSpeed = FMath::RandRange(BulletSpeed - 30, BulletSpeed + 30);
+		const float RandSpeed = FMath::RandRange(BulletSpeed - 10, BulletSpeed + 10);
 		const FVector Impulse = ForwardVector * RandSpeed;
 
 		Bullet->Init(ProjectileDT->BulletStaticMesh, ProjectileDT->BulletProceduralMeshTransform, Impulse, ProjectileDT->GunShotEffect);

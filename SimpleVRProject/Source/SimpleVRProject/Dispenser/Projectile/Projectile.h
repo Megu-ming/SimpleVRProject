@@ -27,8 +27,6 @@ struct FProjectileDataTableRow : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = "Projectile\Eject")
 	FTransform EjectStaticMeshTransform;
 
-	UPROPERTY(EditAnywhere, Category = "Projectile\Eject")
-	bool bPhysics = false;
 };
 
 UCLASS()
