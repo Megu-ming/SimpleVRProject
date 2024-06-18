@@ -3,6 +3,7 @@
 
 #include "Obejct/ProceduralMesh.h"
 #include "KismetProceduralMeshLibrary.h"
+#include "Kismet/KismetMaterialLibrary.h"
 #include "Weapon/Weapon.h"
 
 // Sets default values
@@ -31,6 +32,9 @@ AProceduralMesh::AProceduralMesh()
 void AProceduralMesh::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+
+	UMaterialInterface* MaterialInstance = ProceduralMeshComponent->GetMaterial(0);
+	DynamicMaterial = UKismetMaterialLibrary::CreateDynamicMaterialInstance(this, MaterialInstance);
 
 	SetData(ProceduralMeshDT);
 	
@@ -65,7 +69,6 @@ void AProceduralMesh::SetData(FProceduralMeshDataTableRow* InDataTableRow)
 	MeshType = ProceduralMeshDataTableRow->MeshType;
 	StaticMeshComponent->SetStaticMesh(ProceduralMeshDataTableRow->StaticMesh);
 	SliceParticleSystemComponent->SetTemplate(ProceduralMeshDataTableRow->SliceEffect);
-	ProceduralMeshComponent->SetMassOverrideInKg(NAME_None, ProceduralMeshDataTableRow->Mass, true);
 }
 
 // Called every frame
@@ -85,7 +88,7 @@ void AProceduralMesh::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 		SliceParticleSystemComponent->SetWorldLocation(Hit.Location);
 		SliceParticleSystemComponent->Activate();
 		UKismetProceduralMeshLibrary::SliceProceduralMesh(ProceduralMeshComponent, PlanePosition, -PlaneNormal, true,
-			NewMesh, EProcMeshSliceCapOption::CreateNewSectionForCap, nullptr);
+			NewMesh, EProcMeshSliceCapOption::CreateNewSectionForCap, DynamicMaterial);
 		
 		NewMesh->bUseComplexAsSimpleCollision = false;
 		NewMesh->SetSimulatePhysics(true);

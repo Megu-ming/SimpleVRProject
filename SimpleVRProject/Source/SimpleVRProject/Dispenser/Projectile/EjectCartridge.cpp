@@ -16,11 +16,10 @@ AEjectCartridge::AEjectCartridge()
 	StaticMeshComponent->SetSimulatePhysics(true);
 }
 
-void AEjectCartridge::Init(UStaticMesh* const Mesh, const FVector& InImpulse, const float InMass)
+void AEjectCartridge::Init(UStaticMesh* const Mesh, const FVector& InImpulse)
 {
 	if (!IsValid(Mesh)) { return; }
 
-	StaticMeshComponent->SetMassOverrideInKg(NAME_None, InMass, true);
 	StaticMeshComponent->SetStaticMesh(Mesh);
 	StaticMeshComponent->AddImpulse(InImpulse);
 }

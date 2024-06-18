@@ -12,6 +12,8 @@ class UMotionControllerComponent;
 class UVRHandSkeletalMeshComponent;
 class UHandGraph;
 class UGrabComponent;
+class UWidgetInteractionComponent;
+class UWidgetComponent;
 
 static inline const FName LeftGrip = TEXT("LeftGrip");
 static inline const FName LeftAim = TEXT("LeftAim");
@@ -48,6 +50,7 @@ protected:
 
 protected:
 	void OnMove(const FInputActionValue& InputActionValue);
+	void OnTurn(const FInputActionValue& InputActionValue);
 
 	void OnGrabLeftStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerLeft, true, InputActionValue); }
 	void OnGrabRightStarted(const FInputActionValue& InputActionValue) { OnGrabStarted(MotionControllerRight, false, InputActionValue); }
@@ -60,6 +63,16 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UCameraComponent* VRCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UMotionControllerComponent* MotionControllerAimLeft;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UMotionControllerComponent* MotionControllerAimRight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWidgetInteractionComponent* WidgetInteractionLeft;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWidgetInteractionComponent* WidgetInteractionRight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UMotionControllerComponent* MotionControllerLeft;
@@ -75,6 +88,9 @@ protected:
 	UHandGraph* HandGraphLeft;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHandGraph* HandGraphRight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UWidgetComponent* MenuWidgetComponent;
 
 protected:
 	UPROPERTY(Transient)

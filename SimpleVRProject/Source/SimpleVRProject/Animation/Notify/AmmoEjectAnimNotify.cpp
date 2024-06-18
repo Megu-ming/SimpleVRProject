@@ -34,7 +34,7 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 			const double RandomVector = FMath::RandRange(4.0, 10.0);
 			const FVector Impulse = RightVector * RandomVector;
 
-			EjectCartridge->Init(ProjectileDT->EjectStaticMesh, Impulse, ProjectileDT->EjectMass);
+			EjectCartridge->Init(ProjectileDT->EjectStaticMesh, Impulse);
 		}
 		return;
 	}

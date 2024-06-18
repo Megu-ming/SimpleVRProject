@@ -13,6 +13,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/HandGraph.h"
 #include "Components/GrabComponent.h"
+#include "Components/WidgetInteractionComponent.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AVRCharacter::AVRCharacter()
@@ -23,6 +25,12 @@ AVRCharacter::AVRCharacter()
 	VRCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VRCamera"));
 	VRCamera->SetupAttachment(GetRootComponent());
 
+	MotionControllerAimLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerAimLeft"));
+	MotionControllerAimRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerAimRight"));
+
+	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
+	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
+
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
 
@@ -30,7 +38,20 @@ AVRCharacter::AVRCharacter()
 	MotionControllerRight->SetTrackingMotionSource(TEXT("RightGrip"));
 	MotionControllerLeft->SetupAttachment(GetRootComponent());
 	MotionControllerRight->SetupAttachment(GetRootComponent());
-
+	{
+		MotionControllerAimLeft->SetTrackingMotionSource(LeftAim);
+		MotionControllerAimRight->SetTrackingMotionSource(RightAim);
+		MotionControllerAimLeft->SetupAttachment(GetRootComponent());
+		MotionControllerAimRight->SetupAttachment(GetRootComponent());
+		WidgetInteractionLeft->SetupAttachment(MotionControllerAimLeft);
+		WidgetInteractionLeft->PointerIndex = 0;
+		WidgetInteractionLeft->InteractionDistance = 1000.f;
+		WidgetInteractionLeft->bShowDebug = true;
+		WidgetInteractionRight->SetupAttachment(MotionControllerAimLeft);
+		WidgetInteractionRight->PointerIndex = 1;
+		WidgetInteractionRight->InteractionDistance = 1000.f;
+		WidgetInteractionRight->bShowDebug = true;
+	}
 	GetMesh()->DestroyComponent();
 
 	LeftHand = CreateDefaultSubobject<UVRHandSkeletalMeshComponent>(TEXT("LeftHand"));
@@ -60,6 +81,16 @@ AVRCharacter::AVRCharacter()
 		LeftHand->bMirror = true;
 		LeftHand->SetAnimClass(Class.Class);
 	}
+
+	MenuWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("MenuWidget"));
+	MenuWidgetComponent->SetupAttachment(VRCamera);
+	{
+		static ConstructorHelpers::FClassFinder<UUserWidget> Asset(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/StartMap/UI/UI_Menu.UI_Menu_C'"));
+		ensure(Asset.Class);
+		MenuWidgetComponent->SetWidgetClass(Asset.Class);
+		MenuWidgetComponent->SetRelativeLocation(FVector(400.f, 0.f, 0.f));
+		MenuWidgetComponent->SetDrawSize(FVector2D(800.f, 800.f));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -82,6 +113,8 @@ void AVRCharacter::BeginPlay()
 		Subsystem->AddMappingContext(VRHandsAnimationInputDataConfig->InputMappingContext, 1);
 	}
 	else { check(false); }
+
+	//MenuWidgetComponent->GetWidget()->AddToPlayerScreen();
 }
 
 // Called every frame
@@ -89,12 +122,6 @@ void AVRCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector Start = MotionControllerLeft->GetComponentLocation();
-	FVector ForwardVector = MotionControllerLeft->GetForwardVector();
-	FVector RightVector = MotionControllerLeft->GetRightVector();
-	FVector Cross = -ForwardVector.Cross(RightVector);
-	FVector End = (Cross * TraceDist) + Start;
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false);
 }
 
 // Called to bind functionality to input
@@ -108,6 +135,7 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		const UBasicInputDataConfig* BasicInputDataConfig = GetDefault<UBasicInputDataConfig>();
 		EnhancedInputComponent->BindAction(BasicInputDataConfig->Move, ETriggerEvent::Triggered, this, &AVRCharacter::OnMove);
+		EnhancedInputComponent->BindAction(BasicInputDataConfig->Turn, ETriggerEvent::Triggered, this, &AVRCharacter::OnTurn);
 	}
 	{
 		const UVRHandsInputDataConfig* VRHandsInputDataConfig = GetDefault<UVRHandsInputDataConfig>();
@@ -129,9 +157,7 @@ bool AVRCharacter::PerformLineTrace(FHitResult& OutResult,
 	UMotionControllerComponent* MotionController = InMotionControllerComponent;
 	FVector Start = MotionController->GetComponentLocation();
 	FVector ForwardVector = MotionController->GetForwardVector();
-	FVector RightVector = MotionController->GetRightVector();
-	FVector Cross = -ForwardVector.Cross(RightVector);
-	FVector End = (Cross * TraceDist) + Start;
+	FVector End = (ForwardVector * TraceDist) + Start;
 
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(this);
@@ -178,10 +204,21 @@ void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AVRCharacter::OnTurn(const FInputActionValue& InputActionValue)
+{
+	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
+	
+
+}
+
 void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
 {
 	FHitResult LineTraceResult;
-	bool bIsLineTraceSuccess = PerformLineTrace(LineTraceResult, MotionControllerComponent);
+	bool bIsLineTraceSuccess;
+	if(bLeft)
+		bIsLineTraceSuccess = PerformLineTrace(LineTraceResult, MotionControllerAimLeft);
+	else
+		bIsLineTraceSuccess = PerformLineTrace(LineTraceResult, MotionControllerAimRight);
 
 	const FVector WorldLocation = MotionControllerComponent->GetComponentLocation();
 	const float Radius = 50.f;

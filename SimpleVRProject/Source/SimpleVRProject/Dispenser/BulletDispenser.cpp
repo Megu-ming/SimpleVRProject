@@ -87,7 +87,7 @@ void ABulletDispenser::SpawnEjectCartridge(const FTransform& InEjectTransform)
 			const double RandomVector = FMath::RandRange(15.0, 25.0);
 			const FVector Impulse = RightVector * RandomVector;
 
-			NewActor->Init(ProjectileDataTableRow->EjectStaticMesh, Impulse, ProjectileDataTableRow->EjectMass);
+			NewActor->Init(ProjectileDataTableRow->EjectStaticMesh, Impulse);
 		}
 	);
 }

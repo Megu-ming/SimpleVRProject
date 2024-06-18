@@ -19,4 +19,10 @@ UBasicInputDataConfig::UBasicInputDataConfig()
 		check(Asset.Succeeded());
 		Move = Asset.Object;
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction> Asset
+		{ TEXT("/Script/EnhancedInput.InputAction'/Game/StartMap/Hand/Input/Basic/IA_Turn.IA_Turn'") };
+		check(Asset.Succeeded());
+		Turn = Asset.Object;
+	}
 }

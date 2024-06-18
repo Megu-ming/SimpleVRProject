@@ -20,8 +20,6 @@ struct FProceduralMeshDataTableRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\StaticMesh")
 	UStaticMesh* StaticMesh;
-	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\StaticMesh")
-	float Mass = 0.f;
 		
 	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\Particles")
 	UParticleSystem* SliceEffect;
@@ -71,4 +69,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	EProceduralMeshType MeshType = EProceduralMeshType::BackGround;
+	UPROPERTY(VisibleAnywhere)
+	UMaterialInstanceDynamic* DynamicMaterial = nullptr;
 };

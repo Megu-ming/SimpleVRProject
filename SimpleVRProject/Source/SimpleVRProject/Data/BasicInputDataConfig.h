@@ -20,5 +20,6 @@ public:
 
 public:
 	UInputAction* Move = nullptr;
+	UInputAction* Turn = nullptr;
 
 };
