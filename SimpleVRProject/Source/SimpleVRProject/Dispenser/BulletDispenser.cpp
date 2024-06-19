@@ -84,7 +84,7 @@ void ABulletDispenser::SpawnEjectCartridge(const FTransform& InEjectTransform)
 			}
 
 			const FVector RightVector = NewActor->GetActorRightVector();
-			const double RandomVector = FMath::RandRange(15.0, 25.0);
+			const double RandomVector = FMath::RandRange(20.0, 30.0);
 			const FVector Impulse = RightVector * RandomVector;
 
 			NewActor->Init(ProjectileDataTableRow->EjectStaticMesh, Impulse);
@@ -122,16 +122,15 @@ void ABulletDispenser::SpawnProjectile(const FTransform& InTransform)
 			AProjectile* Projectile = Cast<AProjectile>(NewActor);
 			if (!Projectile) { ensure(false); return; }
 			Projectile->GetProceduralMeshComponent()->SetSimulatePhysics(true);
-			if(!Projectile->bInitialized)
-			{
-				const FVector ForwardVector = InTransform.GetUnitAxis(EAxis::X);
-				const float BulletSpeed = ProjectileDataTableRow->ProjectileSpeed;
-				const float RandSpeed = FMath::RandRange(BulletSpeed - 5, BulletSpeed);
-				const FVector Impulse = ForwardVector * RandSpeed;
 
-				UE_LOG(LogTemp, Warning, TEXT("SetProjectileData %s"), *NewActor->GetName());
-				NewActor->Init(ProjectileDataTableRow, ProceduralMeshDataTableRow, Impulse);
-			}
+			const FVector ForwardVector = InTransform.GetUnitAxis(EAxis::X);
+			const float BulletSpeed = ProjectileDataTableRow->ProjectileSpeed;
+			const float RandSpeed = FMath::RandRange(BulletSpeed - 5, BulletSpeed);
+			const FVector Impulse = ForwardVector * RandSpeed;
+
+			UE_LOG(LogTemp, Warning, TEXT("SetProjectileData %s"), *NewActor->GetName());
+			NewActor->Init(ProjectileDataTableRow, ProceduralMeshDataTableRow, Impulse);
+
 		}, true, this
 	);
 }

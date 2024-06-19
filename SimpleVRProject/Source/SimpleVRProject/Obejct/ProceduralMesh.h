@@ -8,6 +8,7 @@
 #include "MISC/ProceduralEnum.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "ProceduralMesh.generated.h"
 
 USTRUCT()
@@ -23,6 +24,8 @@ struct FProceduralMeshDataTableRow : public FTableRowBase
 		
 	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\Particles")
 	UParticleSystem* SliceEffect;
+	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\Particles")
+	bool bUseConstraintComponent = true;
 };
 
 UCLASS()
@@ -40,7 +43,7 @@ public:
 	virtual void BeginPlay() override;
 
 	void SetData(FDataTableRowHandle& InProceduralMeshDataTableRowHandle);
-	void SetData(FProceduralMeshDataTableRow* InDataTableRow);
+	virtual void SetData(FProceduralMeshDataTableRow* InDataTableRow);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -67,6 +70,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UParticleSystemComponent* SliceParticleSystemComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPhysicsConstraintComponent* PhysicsConstraint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPhysicsConstraintComponent* PhysicsConstraint1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPhysicsConstraintComponent* PhysicsConstraint2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPhysicsConstraintComponent* PhysicsConstraint3;
+
+protected:
+	UPROPERTY(EditAnywhere)
+	bool bUseConstraintComponent;
 	UPROPERTY(EditAnywhere)
 	EProceduralMeshType MeshType = EProceduralMeshType::BackGround;
 	UPROPERTY(VisibleAnywhere)

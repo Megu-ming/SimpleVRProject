@@ -41,7 +41,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void SetData();
+	virtual void SetData(FProceduralMeshDataTableRow* InDataTableRow) override;
 
 public:
 	UFUNCTION()
@@ -50,12 +50,16 @@ public:
 		FVector NormalImpulse, const FHitResult& Hit);
 	UFUNCTION()
 	void OnParticleSpawned(FName EventName, float EmitterTime, FVector Location, FVector Velocity);
+	UFUNCTION()
+	void OnTimerEnd();
 
-	bool bInitialized = false;
+private:
+	FTimerHandle ProjectileLifeTime;
 
 protected:
 	UPROPERTY(EditAnywhere)
 	UParticleSystemComponent* HitEffectParticleSystemComponent;
+
 	FProceduralMeshDataTableRow* MeshDataTableRow;
 
 };

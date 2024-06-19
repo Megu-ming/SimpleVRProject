@@ -9,6 +9,8 @@ AProjectile::AProjectile()
 {
 	HitEffectParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("HitEffectParticleSystemComponent"));
 	ProceduralMeshComponent->SetCollisionProfileName(TEXT("Projectile"));
+
+	HitEffectParticleSystemComponent->SetupAttachment(GetRootComponent());
 }
 
 void AProjectile::Init(FProjectileDataTableRow* InDataTableRow, FProceduralMeshDataTableRow* InMeshDataTableRow, const FVector& InImpulse)
@@ -29,7 +31,7 @@ void AProjectile::Init(FProjectileDataTableRow* InDataTableRow, FProceduralMeshD
 	HitEffectParticleSystemComponent->SetTemplate(InDataTableRow->GunShotEffect);
 	HitEffectParticleSystemComponent->Deactivate();
 
-	SetData();
+	SetData(InMeshDataTableRow);
 
 	ProceduralMeshComponent->AddImpulse(InImpulse);
 }
@@ -42,11 +44,9 @@ void AProjectile::BeginPlay()
 	HitEffectParticleSystemComponent->OnParticleSpawn.AddDynamic(this, &ThisClass::OnParticleSpawned);
 }
 
-void AProjectile::SetData()
+void AProjectile::SetData(FProceduralMeshDataTableRow* InDataTableRow)
 {
-	MeshType = MeshDataTableRow->MeshType;
-	SliceParticleSystemComponent->SetTemplate(MeshDataTableRow->SliceEffect);
-	SliceParticleSystemComponent->Deactivate();
+	Super::SetData(InDataTableRow);
 }
 
 void AProjectile::OnHitAnyObject(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -57,10 +57,18 @@ void AProjectile::OnHitAnyObject(UPrimitiveComponent* HitComponent, AActor* Othe
 		HitEffectParticleSystemComponent->SetWorldLocation(Hit.Location);
 		HitEffectParticleSystemComponent->Activate(true);
 		ProceduralMeshComponent->SetSimulatePhysics(false);
+
+		if(!GetWorld()->GetTimerManager().TimerExists(ProjectileLifeTime))
+			GetWorld()->GetTimerManager().SetTimer(ProjectileLifeTime, this, &ThisClass::OnTimerEnd, 2.5f, false);
 	}
 }
 
 void AProjectile::OnParticleSpawned(FName EventName, float EmitterTime, FVector Location, FVector Velocity)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ParticleSpawned"));
+}
+
+void AProjectile::OnTimerEnd()
+{
+	SetActorHiddenInGame(true);
 }

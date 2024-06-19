@@ -16,8 +16,25 @@ AProceduralMesh::AProceduralMesh()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	SliceParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("SliceParticleSystemComponent"));
 	
+	PhysicsConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PhysicsConstraint"));
+	PhysicsConstraint1 = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PhysicsConstraint1"));
+	PhysicsConstraint2 = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PhysicsConstraint2"));
+	PhysicsConstraint3 = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PhysicsConstraint3"));
+
 	SetRootComponent(ProceduralMeshComponent);
 	StaticMeshComponent->SetupAttachment(GetRootComponent());
+	SliceParticleSystemComponent->SetupAttachment(GetRootComponent());
+	{
+		PhysicsConstraint->SetupAttachment(GetRootComponent());
+		PhysicsConstraint1->SetupAttachment(GetRootComponent());
+		PhysicsConstraint2->SetupAttachment(GetRootComponent());
+		PhysicsConstraint3->SetupAttachment(GetRootComponent());
+
+		PhysicsConstraint->ConstraintActor1 = this;
+		PhysicsConstraint1->ConstraintActor1 = this;
+		PhysicsConstraint2->ConstraintActor1 = this;
+		PhysicsConstraint3->ConstraintActor1 = this;
+	}
 
 	ProceduralMeshComponent->bUseComplexAsSimpleCollision = false;
 	ProceduralMeshComponent->SetSimulatePhysics(true);
@@ -46,9 +63,11 @@ void AProceduralMesh::OnConstruction(const FTransform& Transform)
 void AProceduralMesh::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	//SetData();
 	ProceduralMeshComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
+
+	
 }
 
 void AProceduralMesh::SetData(FDataTableRowHandle& InProceduralMeshDataTableRowHandle)
@@ -66,9 +85,24 @@ void AProceduralMesh::SetData(FProceduralMeshDataTableRow* InDataTableRow)
 {
 	if (!InDataTableRow) { ensure(false); return; }
 
-	MeshType = ProceduralMeshDataTableRow->MeshType;
-	StaticMeshComponent->SetStaticMesh(ProceduralMeshDataTableRow->StaticMesh);
-	SliceParticleSystemComponent->SetTemplate(ProceduralMeshDataTableRow->SliceEffect);
+	MeshType = InDataTableRow->MeshType;
+	StaticMeshComponent->SetStaticMesh(InDataTableRow->StaticMesh);
+	SliceParticleSystemComponent->SetTemplate(InDataTableRow->SliceEffect);
+	SliceParticleSystemComponent->Deactivate();
+	if (!bUseConstraintComponent)
+	{
+		PhysicsConstraint->Deactivate();
+		PhysicsConstraint1->Deactivate();
+		PhysicsConstraint2->Deactivate();
+		PhysicsConstraint3->Deactivate();
+	}
+	else
+	{
+		PhysicsConstraint->ComponentName1 = FConstrainComponentPropName(TEXT("ProceduralMeshComponent"));
+		PhysicsConstraint1->ComponentName1 = FConstrainComponentPropName(TEXT("ProceduralMeshComponent"));
+		PhysicsConstraint2->ComponentName1 = FConstrainComponentPropName(TEXT("ProceduralMeshComponent"));
+		PhysicsConstraint3->ComponentName1 = FConstrainComponentPropName(TEXT("ProceduralMeshComponent"));
+	}
 }
 
 // Called every frame
