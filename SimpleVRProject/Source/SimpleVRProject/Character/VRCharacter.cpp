@@ -206,9 +206,9 @@ void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)
 
 void AVRCharacter::OnTurn(const FInputActionValue& InputActionValue)
 {
-	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
+	const float ActionValue = InputActionValue.Get<float>();
 	
-
+	AddControllerYawInput(ActionValue);
 }
 
 void AVRCharacter::OnGrabStarted(UMotionControllerComponent* MotionControllerComponent, const bool bLeft, const FInputActionValue& InputActionValue)
