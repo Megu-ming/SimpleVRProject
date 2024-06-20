@@ -189,7 +189,7 @@ void AVRCharacter::OnMove(const FInputActionValue& InputActionValue)
 {
 	const FVector2D ActionValue = InputActionValue.Get<FVector2D>();
 
-	const FRotator CameraRotator = VRCamera->GetRelativeRotation();
+	const FRotator CameraRotator = GetActorRotation();
 	const FRotator CameraYaw = FRotator(0., CameraRotator.Yaw, 0.);
 
 	if (!FMath::IsNearlyZero(ActionValue.Y))
