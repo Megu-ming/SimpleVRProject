@@ -28,9 +28,6 @@ AVRCharacter::AVRCharacter()
 	MotionControllerAimLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerAimLeft"));
 	MotionControllerAimRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerAimRight"));
 
-	WidgetInteractionLeft = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionLeft"));
-	WidgetInteractionRight = CreateDefaultSubobject<UWidgetInteractionComponent>(TEXT("WidgetInteractionRight"));
-
 	MotionControllerLeft = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerLeft"));
 	MotionControllerRight = CreateDefaultSubobject<UMotionControllerComponent>(TEXT("MotionControllerRight"));
 
@@ -43,14 +40,6 @@ AVRCharacter::AVRCharacter()
 		MotionControllerAimRight->SetTrackingMotionSource(RightAim);
 		MotionControllerAimLeft->SetupAttachment(GetRootComponent());
 		MotionControllerAimRight->SetupAttachment(GetRootComponent());
-		WidgetInteractionLeft->SetupAttachment(MotionControllerAimLeft);
-		WidgetInteractionLeft->PointerIndex = 0;
-		WidgetInteractionLeft->InteractionDistance = 1000.f;
-		WidgetInteractionLeft->bShowDebug = true;
-		WidgetInteractionRight->SetupAttachment(MotionControllerAimLeft);
-		WidgetInteractionRight->PointerIndex = 1;
-		WidgetInteractionRight->InteractionDistance = 1000.f;
-		WidgetInteractionRight->bShowDebug = true;
 	}
 	GetMesh()->DestroyComponent();
 
@@ -80,16 +69,6 @@ AVRCharacter::AVRCharacter()
 		LeftHand->SetRelativeTransform(Transform);
 		LeftHand->bMirror = true;
 		LeftHand->SetAnimClass(Class.Class);
-	}
-
-	MenuWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("MenuWidget"));
-	MenuWidgetComponent->SetupAttachment(VRCamera);
-	{
-		static ConstructorHelpers::FClassFinder<UUserWidget> Asset(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/StartMap/UI/UI_Menu.UI_Menu_C'"));
-		ensure(Asset.Class);
-		MenuWidgetComponent->SetWidgetClass(Asset.Class);
-		MenuWidgetComponent->SetRelativeLocation(FVector(400.f, 0.f, 0.f));
-		MenuWidgetComponent->SetDrawSize(FVector2D(800.f, 800.f));
 	}
 }
 

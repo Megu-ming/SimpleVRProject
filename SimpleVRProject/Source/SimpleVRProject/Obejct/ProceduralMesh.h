@@ -78,4 +78,5 @@ protected:
 	EProceduralMeshType MeshType = EProceduralMeshType::BackGround;
 	UPROPERTY(VisibleAnywhere)
 	UMaterialInterface* CuttingSurfaceMaterial = nullptr;
+
 };

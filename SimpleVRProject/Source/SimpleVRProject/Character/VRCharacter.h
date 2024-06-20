@@ -70,11 +70,6 @@ protected:
 	UMotionControllerComponent* MotionControllerAimRight;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UWidgetInteractionComponent* WidgetInteractionLeft;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UWidgetInteractionComponent* WidgetInteractionRight;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UMotionControllerComponent* MotionControllerLeft;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UMotionControllerComponent* MotionControllerRight;
@@ -88,9 +83,6 @@ protected:
 	UHandGraph* HandGraphLeft;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHandGraph* HandGraphRight;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UWidgetComponent* MenuWidgetComponent;
 
 protected:
 	UPROPERTY(Transient)

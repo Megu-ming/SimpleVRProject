@@ -97,3 +97,4 @@ void AProceduralMesh::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActo
 	}
 }
 
+
