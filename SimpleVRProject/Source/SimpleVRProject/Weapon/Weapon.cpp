@@ -67,6 +67,7 @@ void AWeapon::SetData(const FVRWeaponDataTableRow* VRWeaponDataTableRow)
 	}
 	SkeletalMeshComponent->SetAnimInstanceClass(VRWeaponDataTableRow->AnimClass);
 	SkeletalMeshComponent->SetRelativeTransform(VRWeaponDataTableRow->MeshTransform, false, nullptr, ETeleportType::ResetPhysics);
+	SkeletalMeshComponent->bResetAfterTeleport = false;
 
 	GrabComponent->SetRelativeTransform(VRWeaponDataTableRow->GrabComponentTransform);
 	GrabComponent->SetData(VRWeaponDataTableRow);
