@@ -42,8 +42,9 @@ void UAmmoEjectAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	ABulletDispenser* Dispenser = Cast<ABulletDispenser>(OwnerActor);   
 	check(Dispenser);
 	
-	if (EditorPreviewBulletDataTable.IsNull()) { return; }
-	FProjectileDataTableRow* ProjectileDT = EditorPreviewBulletDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
+	FDataTableRowHandle DispenserDT = Dispenser->DispenserDT;
+	FDispenserDataTableRow* DispenserRow = DispenserDT.GetRow<FDispenserDataTableRow>(TEXT(""));
+	FProjectileDataTableRow* ProjectileDT = DispenserRow->ProjectileDataTable.GetRow<FProjectileDataTableRow>(TEXT(""));
 	if (!ProjectileDT) { return; }
 	const FTransform FinalTransform = ProjectileDT->EjectStaticMeshTransform * AmmoEjectTransform;
 	

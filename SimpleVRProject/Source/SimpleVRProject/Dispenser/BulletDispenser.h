@@ -53,7 +53,7 @@ public:
 
 	void PlayAnimation();
 
-protected:
+public:
 	UPROPERTY(Category = "Projectile", EditAnywhere, meta = (RowType = "/Script/SIMPLEVRPROJECT.DispenserDataTableRow"))
 	FDataTableRowHandle DispenserDT;
 

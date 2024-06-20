@@ -21,11 +21,12 @@ struct FProceduralMeshDataTableRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\StaticMesh")
 	UStaticMesh* StaticMesh;
+
+	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\Material")
+	UMaterialInterface* CuttingSurfaceMaterial;
 		
 	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\Particles")
 	UParticleSystem* SliceEffect;
-	UPROPERTY(EditAnywhere, Category = "ProceduralMesh\Particles")
-	bool bUseConstraintComponent = true;
 };
 
 UCLASS()
@@ -70,20 +71,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UParticleSystemComponent* SliceParticleSystemComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UPhysicsConstraintComponent* PhysicsConstraint;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UPhysicsConstraintComponent* PhysicsConstraint1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UPhysicsConstraintComponent* PhysicsConstraint2;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UPhysicsConstraintComponent* PhysicsConstraint3;
-
 protected:
 	UPROPERTY(EditAnywhere)
 	bool bUseConstraintComponent;
 	UPROPERTY(EditAnywhere)
 	EProceduralMeshType MeshType = EProceduralMeshType::BackGround;
 	UPROPERTY(VisibleAnywhere)
-	UMaterialInstanceDynamic* DynamicMaterial = nullptr;
+	UMaterialInterface* CuttingSurfaceMaterial = nullptr;
 };
